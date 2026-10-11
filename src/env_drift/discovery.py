@@ -14,6 +14,15 @@ from pathlib import Path
 
 __all__ = ["DEFAULT_EXCLUDES", "EnvFile", "discover_env_files", "env_name_for"]
 
+#: Template suffixes that mark a file as documentation, not a deployable environment.
+_TEMPLATE_SUFFIXES: tuple[str, ...] = (
+    ".example",
+    ".sample",
+    ".template",
+    ".dist",
+    ".defaults",
+)
+
 #: Template files that are documentation, not deployable environments.
 DEFAULT_EXCLUDES: tuple[str, ...] = (
     ".env.example",
@@ -51,10 +60,15 @@ def _is_hidden_dir(path: Path) -> bool:
     return path.name in _HIDDEN_DIRS or path.name.startswith(".")
 
 
+def _is_template(filename: str) -> bool:
+    """Return True if *filename* is a template (ends with a known template suffix)."""
+    return filename.endswith(_TEMPLATE_SUFFIXES)
+
+
 def discover_env_files(root: Path, exclude: tuple[str, ...] = ()) -> list[EnvFile]:
     """Return every environment file under ``root``, sorted by env name."""
     root = Path(root)
-    excluded = set(DEFAULT_EXCLUDES) | set(exclude)
+    excluded = set(exclude)
     found: list[EnvFile] = []
 
     for path in sorted(root.rglob(".env*")):
@@ -62,7 +76,7 @@ def discover_env_files(root: Path, exclude: tuple[str, ...] = ()) -> list[EnvFil
             continue
         if any(part == ".git" or _is_hidden_dir(Path(part)) for part in path.relative_to(root).parts[:-1]):
             continue
-        if path.name in excluded:
+        if _is_template(path.name) or path.name in excluded:
             continue
         if not (path.name == ".env" or path.name.startswith(".env.")):
             continue

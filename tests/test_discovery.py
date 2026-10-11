@@ -34,6 +34,16 @@ def test_example_and_template_files_are_excluded(tmp_path):
     assert [f.name for f in found] == ["development"]
 
 
+def test_per_environment_template_files_are_excluded(tmp_path):
+    make(tmp_path, ".env.development")
+    make(tmp_path, ".env.production")
+    make(tmp_path, ".env.production.example")
+    make(tmp_path, ".env.dev.sample")
+    make(tmp_path, ".env.staging.template")
+    found = discover_env_files(tmp_path)
+    assert [f.name for f in found] == ["development", "production"]
+
+
 def test_extra_excludes_are_honoured(tmp_path):
     make(tmp_path, ".env.development")
     make(tmp_path, ".env.staging")
