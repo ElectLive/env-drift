@@ -1,4 +1,18 @@
+
+
 # env-drift
+
+# env-drift
+
+
+
+## Badges
+
+![GitHub Stars](https://img.shields.io/github/stars/yunaremaia/env-drift?style=social)
+
+![Discord](https://img.shields.io/badge/Discord-Join-7289DA?style=for-the-badge&logo=discord)
+
+![Solana Treasury](https://img.shields.io/badge/Solana-Treasury-%23111?style=for-the-badge&logo=solana)
 
 Compare the `.env` files of a project against each other and report the keys that diverged, before the divergence reaches production.
 
@@ -10,6 +24,32 @@ Compare the `.env` files of a project against each other and report the keys tha
 ## Why
 
 A project that keeps `.env.development`, `.env.staging` and `.env.production` has three files that are only supposed to differ in the ways you decided they may differ. Nothing enforces that, so drift accumulates silently until a deploy breaks:
+
+## Quick Start
+
+Detect drift between environments in 5 minutes:
+
+```bash
+pip install git+https://github.com/yunaremaia/env-drift.git
+```
+
+Or from source:
+
+```bash
+git clone https://github.com/yunaremaia/env-drift.git
+cd env-drift
+python -m venv .venv && .venv/bin/pip install -e .
+```
+
+# Quick scan
+
+```bash
+env-drift scan
+```
+
+The console script is named `env-drift` and the import package is `env_drift`. It has no runtime dependencies.
+
+### Install
 
 - **Missing keys** — a key added to `.env.development` and `.env.staging` never reaches `.env.production`, and the production code reads `undefined` at runtime.
 - **Orphaned keys** — a key still set in `.env.production` that no other environment declares any more: dead config that keeps a real credential in the deployed artifact.
